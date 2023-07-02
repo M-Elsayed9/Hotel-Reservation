@@ -9,6 +9,7 @@ import service.ReservationService;
 
 import java.util.Collection;
 import java.util.Date;
+import java.time.format.DateTimeFormatter;
 
 public class HotelResource {
     private static HotelResource hotelResource;

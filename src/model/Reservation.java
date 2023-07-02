@@ -1,13 +1,15 @@
 package model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
 public class Reservation {
-    private Customer customer;
-    private IRoom room;
-    private Date checkInDate;
-    private Date checkOutDate;
+    private final Customer customer;
+    private final IRoom room;
+    private final Date checkInDate;
+    private final Date checkOutDate;
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/DD/YYYY");
 
     public Reservation(Customer customer, IRoom room, Date checkInDate, Date checkOutDate) {
         this.customer = customer;
@@ -36,7 +38,10 @@ public class Reservation {
 
     @Override
     public String toString() {
-        return super.toString();
+        return customer.getFullName() +
+                "\n" + room +
+                "Check In Date: " + checkInDate + "\n" +
+                "Check Out Date: " + checkOutDate + "\n";
     }
 
     @Override

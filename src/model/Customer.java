@@ -4,11 +4,11 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Customer {
-    private String firstName;
-    private String lastname;
-    private String email;
-    private final String emailRegEx = "^[^@]*@[^@]*\\.com$";
-    private final Pattern pattern = Pattern.compile(emailRegEx);
+    private final String firstName;
+    private final String lastname;
+    private final String email;
+    private static final String emailRegEx = "^[^@]*@[^@]*\\.com$";
+    private static final Pattern pattern = Pattern.compile(emailRegEx);
 
     public Customer(String firstName, String lastname, String email) {
         if(!pattern.matcher(email).matches()) {
@@ -19,10 +19,13 @@ public class Customer {
         this.email = email;
     }
 
+    public String getFullName() {
+        return firstName + " " + lastname;
+    }
     @Override
     public String toString() {
-        return "Name: " + firstName + " " + lastname +
-                "\nEmail: " + email;
+        return "First Name: " + firstName + "\nLast Name " + lastname +
+                "\nEmail: " + email + "\n";
     }
 
     @Override
