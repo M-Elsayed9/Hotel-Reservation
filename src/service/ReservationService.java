@@ -9,6 +9,7 @@ import java.util.*;
 public class ReservationService {
     private static final Set<Reservation> reservations = new HashSet<>();
     private static final Map<String, IRoom> rooms = new HashMap<>();
+    public static final List<IRoom> reservedRooms = new ArrayList<>();
     private static ReservationService reservationService;
 
     private ReservationService(){}
@@ -30,17 +31,20 @@ public class ReservationService {
 
     public Reservation reserveARoom(Customer customer, IRoom room, Date checkInDate, Date checkOutDate) {
         Reservation reservation = new Reservation(customer, room, checkInDate, checkOutDate);
-        reservations.add(reservation);
+        if(!reservations.add(reservation)) {
+            System.out.println("Room is booked");
+            throw new IllegalArgumentException();
+        }
+        reservedRooms.add(room);
         return reservation;
     }
 
     public Collection<IRoom> findRooms(Date checkInDate, Date checkOutDate) {
-        Collection<IRoom> availableRooms = rooms.values();
+        final Collection<IRoom> availableRooms = new HashSet<>(rooms.values());
 
         for(Reservation reservation : reservations) {
-            if(checkInDate.equals(reservation.getCheckInDate())
-                    || checkInDate.before(reservation.getCheckOutDate())
-                    && checkInDate.after(reservation.getCheckInDate())) {
+            if(checkInDate.before(reservation.getCheckOutDate())
+                    && checkOutDate.after(reservation.getCheckInDate())) {
                 availableRooms.remove(reservation.getRoom());
             }
         }
@@ -50,6 +54,10 @@ public class ReservationService {
 
     public Collection<Reservation> getCustomerReservation(Customer customer) {
         return reservations.stream().filter(reservation -> reservation.getCustomer().equals(customer)).toList();
+    }
+
+    public Collection<Reservation> getAllReservations() {
+        return reservations;
     }
 
     public void printAllReservation() {

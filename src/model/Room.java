@@ -9,31 +9,27 @@ public class Room implements IRoom {
 
     public Room(String roomNumber, Double price, RoomType enumeration) {
         this.roomNumber = roomNumber;
-        this.price = price;
+        this.price = Objects.requireNonNull(price);
         this.enumeration = enumeration;
     }
     @Override
-    public String getRoomNumber() {
+    public final String getRoomNumber() {
         return roomNumber;
     }
 
     @Override
-    public Double getRoomPrice() {
+    public final Double getRoomPrice() {
         return price;
     }
 
     @Override
-    public RoomType getRoomType() {
+    public final RoomType getRoomType() {
         return enumeration;
     }
 
     @Override
-    public boolean isFree() {
-        if(price > 0) {
-            return false;
-        }
-
-        return true;
+    public final boolean isFree() {
+        return price <= 0;
     }
 
     @Override
@@ -52,7 +48,7 @@ public class Room implements IRoom {
     public boolean equals(Object obj) {
         if(obj instanceof Room) {
             Room other = (Room) obj;
-            return this.roomNumber.equals(roomNumber);
+            return this.roomNumber.equals(other.roomNumber);
         }else {
             return false;
         }

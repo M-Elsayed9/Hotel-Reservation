@@ -9,7 +9,7 @@ import service.ReservationService;
 
 import java.util.Collection;
 import java.util.Date;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class HotelResource {
     private static HotelResource hotelResource;
@@ -47,5 +47,13 @@ public class HotelResource {
 
     public Collection<IRoom> findARoom(Date checkIn, Date checkOut) {
         return reservationService.findRooms(checkIn, checkOut);
+    }
+
+    public Collection<Reservation> getAllReservations() {
+        return reservationService.getAllReservations();
+    }
+
+    public List<IRoom> getAllReservedRooms() {
+        return reservationService.reservedRooms;
     }
 }

@@ -104,12 +104,19 @@ public class AdminMenu {
                 int type = scanner.nextInt();
                 if(type == 1) {
                     roomType = RoomType.SINGLE;
-                    validInput = false;
                 } else if (type == 2) {
                     roomType = RoomType.DOUBLE;
-                    validInput = false;
                 }else {
                     throw new IllegalArgumentException();
+                }
+                final IRoom room = new Room(roomNumber, price, roomType);
+                if(adminResource.getAllRooms().contains(room)) {
+                    System.out.println("Error: Cant add duplicate rooms");
+                    printAdminMenu();
+                    return;
+                }else {
+                    rooms.add(room);
+                    validInput = false;
                 }
             }catch (Exception ex) {
                 System.out.println("Error: invalid input (Enter 1 or 2)");
@@ -117,7 +124,6 @@ public class AdminMenu {
             }
         }
 
-        rooms.add(new Room(roomNumber, price, roomType));
         adminResource.addRoom(rooms);
 
         validInput = true;
@@ -127,10 +133,9 @@ public class AdminMenu {
                 String input = scanner.next();
                 if(input.equals("y")) {
                     addRoom();
-                    return;
                 }else if(input.equals("n")){
                     printAdminMenu();
-                    return;
+                    validInput = false;
                 }else {
                     throw new IllegalArgumentException();
                 }

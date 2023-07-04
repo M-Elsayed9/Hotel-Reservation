@@ -23,7 +23,7 @@ public class MainMenu {
         options.add("3. Create an Account");
         options.add("4. Admin");
         options.add("5. Exit");
-        options.stream().forEach(System.out::println);
+        options.forEach(System.out::println);
 
         Scanner scanner = new Scanner(System.in);
         int option = 0;
@@ -47,13 +47,16 @@ public class MainMenu {
             case 2 -> seeMyReservation();
             case 3 -> createAccount();
             case 4 -> AdminMenu.adminMenu();
-            case 5 -> System.out.println("Exiting");
+            case 5 -> {
+                System.out.println("Exiting...");
+                validInput = false;
+            }
         }
     }
 
     private static void seeMyReservation() {
         Scanner scanner = new Scanner(System.in);
-        String email = "";
+        String email;
 
         boolean validInput = true;
         while(validInput) {
@@ -64,16 +67,17 @@ public class MainMenu {
                 if(reservations.isEmpty()) {
                     System.out.println("No reservations found\n");
                     printMainMenu();
-                    return;
+                    validInput = false;
                 }else {
                     reservations.forEach(System.out::println);
                     validInput = false;
+                    printMainMenu();
                 }
             }catch (Exception ex) {
                 System.out.println("Error: Invalid email");
             }
         }
-        printMainMenu();
+
     }
 
     private static void createAccount() {
@@ -132,15 +136,104 @@ public class MainMenu {
         printMainMenu();
     }
 
+    private static void findAlternativeRooms(Date checkIn, Date checkOut) {
+        System.out.println("There are no rooms available for the given dates");
+        System.out.println("Finding alternative rooms available the following week...\n");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(checkIn);
+        calendar.add(Calendar.DAY_OF_MONTH, 7);
+        Date newCheckIn = calendar.getTime();
+
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTime(checkOut);
+        calendar1.add(Calendar.DAY_OF_MONTH, 7);
+        Date newCheckOut = calendar1.getTime();
+
+        Collection<IRoom> availableRooms = hotelResource.findARoom(newCheckIn, newCheckOut);
+        if(availableRooms.isEmpty()) {
+            System.out.println("There are no rooms available the following week also");
+            printMainMenu();
+            return;
+        }
+        System.out.println("Rooms available on alternative dates:" +
+                "\nCheck-In Date:" + newCheckIn +
+                "\nCheck-Out Date:" + newCheckOut);
+        availableRooms.forEach(System.out::println);
+
+        Scanner scanner = new Scanner(System.in);
+        boolean validInput = true;
+        while(validInput) {
+            try {
+                System.out.println("Would you like to book a room? y/n");
+                String input = scanner.next();
+                if(input.equalsIgnoreCase("y")) {
+                    validInput = false;
+                }else if (input.equalsIgnoreCase("n")) {
+                    validInput = false;
+                    printMainMenu();
+                    return;
+                }else {
+                    System.out.println("Error: Invalid input");
+                }
+            }catch (Exception ex) {}
+        }
+
+        validInput = true;
+        while (validInput) {
+            try {
+                System.out.println("Do you have an account with us? y/n");
+                String input = scanner.next();
+                if(input.equalsIgnoreCase("y")) {
+                    validInput = false;
+                }else if (input.equalsIgnoreCase("n")) {
+                    validInput = false;
+                    System.out.println("Please create an account in the main menu");
+                    printMainMenu();
+                    return;
+                }else {
+                    System.out.println("Error: Invalid input");
+                }
+            } catch (Exception ex) {}
+        }
+
+        String email = "";
+        validInput = true;
+        while (validInput) {
+            try {
+                System.out.println("Enter Email format: name@domain.com");
+                email = scanner.next();
+                hotelResource.getCustomer(email);
+                validInput = false;
+            }catch (Exception ex) {
+                System.out.println("Error: Invalid email");
+            }
+        }
+
+        String roomNumber;
+        validInput = true;
+        while (validInput) {
+            try {
+                System.out.println("What room would you like to reserve?");
+                roomNumber = scanner.next();
+                Reservation reservation = hotelResource.bookARoom(email, hotelResource.getRoom(roomNumber), newCheckIn, newCheckOut);
+                System.out.println(reservation);
+                mainMenu();
+                validInput = false;
+            }catch (Exception ex) {
+
+            }
+        }
+    }
     private static void findAndReserveRoom() {
         Scanner scanner = new Scanner(System.in);
 
         Date checkIn = null;
+        Date checkOut = null;
         boolean validInput = true;
         while(validInput) {
             try {
                 System.out.println("Enter Check-In Date mm/dd/yyyy example 02/01/2020");
-                String checkInDate = scanner.nextLine();
+                String checkInDate = scanner.next();
                 checkIn = dateFormat.parse(checkInDate);
                 validInput = false;
             } catch (Exception ex) {
@@ -148,13 +241,13 @@ public class MainMenu {
             }
         }
 
-        Date checkOut = null;
+
         validInput = true;
         while(validInput) {
             try {
                 System.out.println("Enter Check-Out Date mm/dd/yyyy example 02/01/2020");
-                String checkInDate = scanner.nextLine();
-                checkOut = dateFormat.parse(checkInDate);
+                String checkOutDate = scanner.next();
+                checkOut = dateFormat.parse(checkOutDate);
                 validInput = false;
             } catch (Exception ex) {
                 System.out.println("Error: invalid input");
@@ -163,12 +256,12 @@ public class MainMenu {
 
         Collection<IRoom> availableRooms = hotelResource.findARoom(checkIn, checkOut);
         if(availableRooms.isEmpty()) {
-            System.out.println("Unfortunately, There are no rooms available within these dates");
+            findAlternativeRooms(checkIn, checkOut);
             printMainMenu();
             return;
+        }else {
+            availableRooms.forEach(System.out::println);
         }
-
-        availableRooms.forEach(System.out::println);
 
         validInput = true;
         while(validInput) {
@@ -218,15 +311,16 @@ public class MainMenu {
             }
         }
 
-        String roomNumber = "";
+        String roomNumber;
         validInput = true;
         while (validInput) {
             try {
                 System.out.println("What room would you like to reserve?");
                 roomNumber = scanner.next();
-                System.out.println(hotelResource.bookARoom(email, hotelResource.getRoom(roomNumber), checkIn, checkOut));
+                Reservation reservation = hotelResource.bookARoom(email, hotelResource.getRoom(roomNumber), checkIn, checkOut);//bug
+                System.out.println(reservation);
                 mainMenu();
-                return;
+                validInput = false;
             }catch (Exception ex) {
 
             }
