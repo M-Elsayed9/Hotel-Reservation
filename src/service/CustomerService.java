@@ -6,7 +6,7 @@ import java.util.*;
 
 public class CustomerService {
 
-    private Map<String, Customer> customers = new HashMap<>();
+    private static final Map<String, Customer> customers = new HashMap<>();
     private static CustomerService customerService;
 
     private CustomerService() {}
@@ -32,5 +32,9 @@ public class CustomerService {
 
     public Collection<Customer> getAllCustomer() {
         return customers.values();
+    }
+
+    public Collection<String> getAllCustomersEmails() {
+        return customers.keySet();
     }
 }

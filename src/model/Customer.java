@@ -19,6 +19,10 @@ public class Customer {
         this.email = email;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public String getFullName() {
         return firstName + " " + lastname;
     }

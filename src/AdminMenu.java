@@ -34,8 +34,7 @@ public class AdminMenu {
                     validInput = false;
                 }
             }catch(Exception ex) {
-                scanner.next();
-                ex.getLocalizedMessage();
+                scanner.nextLine();
                 System.out.println("Error: Invalid input! (Enter a number between 1-5)");
             }
         }
@@ -72,17 +71,19 @@ public class AdminMenu {
         List<IRoom> rooms = new ArrayList<>();
         String roomNumber = "";
         Double price = 0.0;
-        RoomType roomType = null;
+        RoomType roomType;
 
         boolean validInput = true;
         while(validInput) {
             try {
                 System.out.println("Enter room number: ");
-                roomNumber = scanner.next();
+                roomNumber = String.valueOf(scanner.nextInt());
                 if(!roomNumber.isEmpty()) {
                     validInput = false;
                 }
             }catch (Exception ex) {
+                scanner.nextLine();
+                System.out.println("Error: invalid input");
             }
         }
 
@@ -120,7 +121,7 @@ public class AdminMenu {
                 }
             }catch (Exception ex) {
                 System.out.println("Error: invalid input (Enter 1 or 2)");
-                scanner.next();
+                scanner.nextLine();
             }
         }
 
@@ -130,9 +131,10 @@ public class AdminMenu {
         while (validInput) {
             try {
                 System.out.println("Would you like to add another room? y/n");
-                String input = scanner.next();
+                String input = scanner.nextLine();
                 if(input.equals("y")) {
                     addRoom();
+                    return;
                 }else if(input.equals("n")){
                     printAdminMenu();
                     validInput = false;

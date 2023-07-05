@@ -9,7 +9,7 @@ import java.util.*;
 public class ReservationService {
     private static final Set<Reservation> reservations = new HashSet<>();
     private static final Map<String, IRoom> rooms = new HashMap<>();
-    public static final List<IRoom> reservedRooms = new ArrayList<>();
+    //public static final List<IRoom> reservedRooms = new ArrayList<>();
     private static ReservationService reservationService;
 
     private ReservationService(){}
@@ -35,7 +35,7 @@ public class ReservationService {
             System.out.println("Room is booked");
             throw new IllegalArgumentException();
         }
-        reservedRooms.add(room);
+        //reservedRooms.add(room);
         return reservation;
     }
 

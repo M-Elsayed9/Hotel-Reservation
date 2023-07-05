@@ -9,7 +9,6 @@ import service.ReservationService;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 public class HotelResource {
     private static HotelResource hotelResource;
@@ -53,7 +52,7 @@ public class HotelResource {
         return reservationService.getAllReservations();
     }
 
-    public List<IRoom> getAllReservedRooms() {
-        return reservationService.reservedRooms;
+    public Collection<String> getAllCustomersEmails() {
+       return customerService.getAllCustomersEmails();
     }
 }

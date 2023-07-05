@@ -13,6 +13,8 @@ public class Reservation {
     public Reservation(Customer customer, IRoom room, Date checkInDate, Date checkOutDate) {
         this.customer = Objects.requireNonNull(customer);
         this.room = Objects.requireNonNull(room);
+        if(checkOutDate.before(checkInDate))
+            throw new IllegalArgumentException();
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
     }

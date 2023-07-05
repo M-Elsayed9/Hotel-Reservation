@@ -37,7 +37,7 @@ public class MainMenu {
                     validInput = false;
                 }
             }catch(Exception ex) {
-                scanner.next();
+                scanner.nextLine();
                 System.out.println("Error: Invalid input! (Enter a number between 1-5)");
             }
         }
@@ -47,10 +47,7 @@ public class MainMenu {
             case 2 -> seeMyReservation();
             case 3 -> createAccount();
             case 4 -> AdminMenu.adminMenu();
-            case 5 -> {
-                System.out.println("Exiting...");
-                validInput = false;
-            }
+            case 5 -> System.out.println("Exiting...");
         }
     }
 
@@ -62,7 +59,7 @@ public class MainMenu {
         while(validInput) {
             try{
                 System.out.println("Enter Email format: name@domain.com");
-                email = scanner.next();
+                email = scanner.nextLine();
                 Collection<Reservation> reservations = hotelResource.getCustomersReservations(email);
                 if(reservations.isEmpty()) {
                     System.out.println("No reservations found\n");
@@ -77,7 +74,6 @@ public class MainMenu {
                 System.out.println("Error: Invalid email");
             }
         }
-
     }
 
     private static void createAccount() {
@@ -92,10 +88,15 @@ public class MainMenu {
                 final String emailRegEx = "^[^@]*@[^@]*\\.com$";
                 final Pattern pattern = Pattern.compile(emailRegEx);
                 System.out.println("Enter Email format: name@domain.com");
-                email = scanner.next();
+                email = scanner.nextLine();
+
+                if (hotelResource.getAllCustomersEmails().contains(email)) {
+                    System.out.println("Error: Duplicate email");
+                    continue;
+                }
                 if(pattern.matcher(email).matches()) {
                     validInput = false;
-                }else {
+                } else {
                     throw new IllegalArgumentException();
                 }
             }catch (Exception ex) {
@@ -107,7 +108,7 @@ public class MainMenu {
         while (validInput) {
             try {
                 System.out.println("First name: ");
-                firstName = scanner.next();
+                firstName = scanner.nextLine();
                 if(firstName.isEmpty()) {
                     throw new IllegalArgumentException();
                 }
@@ -121,7 +122,7 @@ public class MainMenu {
         while (validInput) {
             try {
                 System.out.println("Last name: ");
-                lastName = scanner.next();
+                lastName = scanner.nextLine();
                 if(lastName.isEmpty()) {
                     throw new IllegalArgumentException();
                 }
@@ -165,24 +166,24 @@ public class MainMenu {
         while(validInput) {
             try {
                 System.out.println("Would you like to book a room? y/n");
-                String input = scanner.next();
+                String input = scanner.nextLine();
                 if(input.equalsIgnoreCase("y")) {
                     validInput = false;
                 }else if (input.equalsIgnoreCase("n")) {
                     validInput = false;
                     printMainMenu();
                     return;
-                }else {
-                    System.out.println("Error: Invalid input");
                 }
-            }catch (Exception ex) {}
+            }catch (Exception ex) {
+                System.out.println("Error: Invalid input");
+            }
         }
 
         validInput = true;
         while (validInput) {
             try {
                 System.out.println("Do you have an account with us? y/n");
-                String input = scanner.next();
+                String input = scanner.nextLine();
                 if(input.equalsIgnoreCase("y")) {
                     validInput = false;
                 }else if (input.equalsIgnoreCase("n")) {
@@ -201,7 +202,7 @@ public class MainMenu {
         while (validInput) {
             try {
                 System.out.println("Enter Email format: name@domain.com");
-                email = scanner.next();
+                email = scanner.nextLine();
                 hotelResource.getCustomer(email);
                 validInput = false;
             }catch (Exception ex) {
@@ -214,13 +215,13 @@ public class MainMenu {
         while (validInput) {
             try {
                 System.out.println("What room would you like to reserve?");
-                roomNumber = scanner.next();
+                roomNumber = scanner.nextLine();
                 Reservation reservation = hotelResource.bookARoom(email, hotelResource.getRoom(roomNumber), newCheckIn, newCheckOut);
                 System.out.println(reservation);
                 mainMenu();
                 validInput = false;
             }catch (Exception ex) {
-
+                System.out.println("Error: invalid input");
             }
         }
     }
@@ -233,7 +234,7 @@ public class MainMenu {
         while(validInput) {
             try {
                 System.out.println("Enter Check-In Date mm/dd/yyyy example 02/01/2020");
-                String checkInDate = scanner.next();
+                String checkInDate = scanner.nextLine();
                 checkIn = dateFormat.parse(checkInDate);
                 validInput = false;
             } catch (Exception ex) {
@@ -246,8 +247,12 @@ public class MainMenu {
         while(validInput) {
             try {
                 System.out.println("Enter Check-Out Date mm/dd/yyyy example 02/01/2020");
-                String checkOutDate = scanner.next();
+                String checkOutDate = scanner.nextLine();
                 checkOut = dateFormat.parse(checkOutDate);
+                if(checkOut.before(checkIn)) {
+                    System.out.println("Checkout date must be after check in date");
+                    throw new IllegalArgumentException();
+                }
                 validInput = false;
             } catch (Exception ex) {
                 System.out.println("Error: invalid input");
@@ -267,7 +272,7 @@ public class MainMenu {
         while(validInput) {
             try {
                 System.out.println("Would you like to book a room? y/n");
-                String input = scanner.next();
+                String input = scanner.nextLine();
                 if(input.equalsIgnoreCase("y")) {
                     validInput = false;
                 }else if (input.equalsIgnoreCase("n")) {
@@ -277,7 +282,9 @@ public class MainMenu {
                 }else {
                     System.out.println("Error: Invalid input");
                 }
-            }catch (Exception ex) {}
+            }catch (Exception ex) {
+                System.out.println("Error: invalid input");
+            }
         }
 
         validInput = true;
@@ -303,7 +310,7 @@ public class MainMenu {
         while (validInput) {
             try {
                 System.out.println("Enter Email format: name@domain.com");
-                email = scanner.next();
+                email = scanner.nextLine();
                 hotelResource.getCustomer(email);
                 validInput = false;
             }catch (Exception ex) {
@@ -316,13 +323,13 @@ public class MainMenu {
         while (validInput) {
             try {
                 System.out.println("What room would you like to reserve?");
-                roomNumber = scanner.next();
+                roomNumber = String.valueOf(scanner.nextInt());
                 Reservation reservation = hotelResource.bookARoom(email, hotelResource.getRoom(roomNumber), checkIn, checkOut);//bug
                 System.out.println(reservation);
-                mainMenu();
+                printMainMenu();
                 validInput = false;
             }catch (Exception ex) {
-
+                System.out.println("Error: invalid input");
             }
         }
     }
