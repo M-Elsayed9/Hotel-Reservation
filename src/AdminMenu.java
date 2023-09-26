@@ -14,12 +14,13 @@ public class AdminMenu {
     }
 
     private static void printAdminMenu() {
-        List<String> options = new ArrayList<>();
-        options.add("1. See all Customers");
-        options.add("2. See all Rooms");
-        options.add("3. See all Reservations");
-        options.add("4. Add a Room");
-        options.add("5. Back to Main Menu");
+        List<String> options = List.of(
+                "1. See all Customers",
+                "2. See all Rooms",
+                "3. See all Reservations",
+                "4. Add a Room",
+                "5. Back to Main Menu"
+        );
         options.forEach(System.out::println);
 
         Scanner scanner = new Scanner(System.in);

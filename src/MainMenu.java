@@ -17,12 +17,11 @@ public class MainMenu {
     }
 
     public static void printMainMenu() {
-        List<String> options = new ArrayList<>();
-        options.add("1. Find and reserve a room");
-        options.add("2. See my reservations");
-        options.add("3. Create an Account");
-        options.add("4. Admin");
-        options.add("5. Exit");
+        List<String> options = List.of("1. Find and reserve a room",
+                "2. See my reservations",
+                "3. Create an Account",
+                "4. Admin",
+                "5. Exit");
         options.forEach(System.out::println);
 
         Scanner scanner = new Scanner(System.in);
